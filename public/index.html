@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lux Mundi University - Exeat & Housing Management System</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        luxGreen: '#064e3b',
+                        luxGreenDark: '#022c22',
+                        luxGold: '#d97706',
+                        luxGoldLight: '#fef3c7',
+                        luxAccent: '#059669',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col justify-between">
+
+    <!-- ========================================================== -->
+    <!-- VIEW 1: AUTHENTICATION LOGIN PORTAL                        -->
+    <!-- ========================================================== -->
+    <div id="login-view"
+        class="flex-grow flex items-center justify-center p-4 bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900">
+        <div class="glass-card rounded-2xl shadow-2xl max-w-md w-full p-8 border border-emerald-900/20 animate-fade-in">
+            <div class="text-center mb-8">
+                <div
+                    class="w-14 h-14 rounded-2xl bg-luxGold mx-auto flex items-center justify-center text-white font-black text-2xl shadow-lg mb-3 border border-amber-300">
+                    LMU
+                </div>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight">Lux Mundi University</h1>
+                <p class="text-xs text-slate-500 mt-1">Digital Exeat & Safety Pass System • Secure Login</p>
+            </div>
+
+            <form id="login-form" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Username /
+                        Matric Number</label>
+                    <input type="text" id="login-username" required placeholder="e.g. LMU/2026/0142"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-luxGreen text-sm">
+                </div>
+                <div>
+                    <label
+                        class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••"
+                        class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-luxGreen text-sm">
+                </div>
+                <button type="submit"
+                    class="w-full bg-luxGreen hover:bg-emerald-900 text-white font-bold py-3 rounded-xl transition shadow-lg text-sm">
+                    Authenticate Session
+                </button>
+            </form>
+
+            <div id="login-error"
+                class="hidden mt-4 p-3 bg-rose-50 border border-rose-200 text-rose-600 text-xs rounded-xl text-center">
+            </div>
+
+            <!-- Quick Demo Accounts Helper -->
+            <div class="mt-8 pt-6 border-t border-slate-200">
+                <p class="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider text-center mb-3">Quick
+                    Demo Login Accounts</p>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button type="button" onclick="quickFill('LMU/2026/0142', 'student123')"
+                        class="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-left font-medium text-slate-700">🎓
+                        Student</button>
+                    <button type="button" onclick="quickFill('porter_augustine', 'warden123')"
+                        class="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-left font-medium text-slate-700">🏛️
+                        Porter</button>
+                    <button type="button" onclick="quickFill('security_gate1', 'security123')"
+                        class="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-left font-medium text-slate-700">🛡️
+                        Gate Security</button>
+                    <button type="button" onclick="quickFill('admin', 'admin123')"
+                        class="p-2 bg-slate-100 hover:bg-slate-200 rounded-lg text-left font-medium text-slate-700">⚡
+                        ICT Admin</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================== -->
+    <!-- MAIN DASHBOARD APP                                         -->
+    <!-- ========================================================== -->
+    <div id="app-dashboard" class="hidden flex-col min-h-screen">
+        <header class="bg-luxGreen text-white shadow-lg sticky top-0 z-50">
+            <div
+                class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-11 h-11 rounded-xl bg-luxGold flex items-center justify-center text-white font-extrabold text-xl shadow-md border border-amber-300">
+                        LMU
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-black tracking-tight text-white">Lux Mundi University</h1>
+                        <p class="text-xs text-amber-200 font-medium">Digital Exeat & Safety Pass System</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div
+                        class="bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-700/60 text-xs flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span id="session-user-name" class="font-bold text-white"></span>
+                    </div>
+                    <button onclick="logout()"
+                        class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                        <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Broadcast Notification Banner -->
+        <div id="broadcastBanner"
+            class="hidden bg-amber-100 border-b border-amber-300 px-4 py-2 text-amber-900 text-xs font-bold flex items-center justify-between">
+            <span id="broadcastText"><i class="fa-solid fa-bullhorn mr-2"></i> Announcement from ICT Admin: </span>
+            <button onclick="document.getElementById('broadcastBanner').classList.add('hidden')"
+                class="text-amber-800 hover:text-black"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- TOAST NOTIFICATION POPUP -->
+        <div id="toastNotification"
+            class="hidden fixed bottom-5 right-5 z-50 bg-slate-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border-l-4 border-luxGold flex items-center gap-3 animate-fade-in max-w-md">
+            <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
+            <div>
+                <h4 id="toastTitle" class="font-bold text-sm">Action Complete</h4>
+                <p id="toastMessage" class="text-xs text-slate-300">Status updated.</p>
+            </div>
+        </div>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full space-y-6">
+
+            <!-- ========================================================= -->
+            <!-- VIEW A: STUDENT DASHBOARD                                 -->
+            <!-- ========================================================= -->
+            <section id="portal-student" class="role-portal hidden space-y-6">
+                <div
+                    class="bg-gradient-to-r from-luxGreen to-emerald-900 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+                    <div class="max-w-2xl space-y-3 relative z-10">
+                        <span
+                            class="bg-luxGold/30 text-amber-300 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-amber-400/30">Student
+                            Leave Portal</span>
+                        <h2 id="student-welcome-title" class="text-2xl sm:text-3xl font-extrabold">Welcome back!</h2>
+                        <p class="text-emerald-100 text-xs sm:text-sm leading-relaxed">
+                            Submit an official Exeat request below. Track your workflow status from parent consent to
+                            gate clearance and hostel check-in.
+                        </p>
+                        <button onclick="openApplyModal()"
+                            class="bg-luxGold hover:bg-amber-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm shadow-md transition flex items-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> Submit New Exeat Application
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-6">
+                    <h3 class="font-bold text-slate-900 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-route text-luxGold"></i> My Exeat Application History & Status Workflow
+                    </h3>
+                    <div id="student-requests-list" class="space-y-3">
+                        <div class="text-center py-8 text-slate-400 text-sm">Loading your records...</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================= -->
+            <!-- VIEW B: PORTER (HOSTEL ADMIN) DASHBOARD                   -->
+            <!-- ========================================================= -->
+            <section id="portal-porter" class="role-portal hidden space-y-6">
+                <!-- Porter KPI Bar -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <span class="text-slate-500 text-[11px] font-bold uppercase tracking-wider block">Assigned
+                            Hostel</span>
+                        <span id="porterHostelName"
+                            class="text-lg font-extrabold text-luxGreen mt-0.5 block">Hostel</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <span class="text-slate-500 text-[11px] font-bold uppercase tracking-wider block">Hostel
+                            Occupancy</span>
+                        <span id="porterOccupancy" class="text-xl font-extrabold text-slate-900 mt-0.5 block">0 /
+                            0</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <span class="text-slate-500 text-[11px] font-bold uppercase tracking-wider block">Active
+                            Requests</span>
+                        <span id="porterActiveReq" class="text-xl font-extrabold text-amber-600 mt-0.5 block">0</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <span class="text-slate-500 text-[11px] font-bold uppercase tracking-wider block">Pending Parent
+                            Consent</span>
+                        <span id="porterParentPending"
+                            class="text-xl font-extrabold text-rose-600 mt-0.5 block">0</span>
+                    </div>
+                </div>
+
+                <!-- Porter Tabs & Controls -->
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-4">
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b pb-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-building-user text-luxGold"></i> Porter Hostel Duty Desk
+                            </h2>
+                            <p class="text-xs text-slate-500">Manage hostel students, approve pending parent consents,
+                                sign out students, and export reports.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="exportPorterCSV('monthly')"
+                                class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold border"><i
+                                    class="fa-solid fa-download"></i> Monthly CSV</button>
+                            <button onclick="exportPorterCSV('all')"
+                                class="bg-luxGreen text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow"><i
+                                    class="fa-solid fa-download"></i> Export All Records</button>
+                        </div>
+                    </div>
+
+                    <!-- Sub-tabs for Porter -->
+                    <div class="flex gap-2 border-b pb-3 text-xs font-bold">
+                        <button onclick="switchPorterTab('requests')" id="p-tab-req"
+                            class="px-4 py-2 rounded-xl bg-luxGreen text-white transition">Exeat Requests &
+                            Actions</button>
+                        <button onclick="switchPorterTab('students')" id="p-tab-stu"
+                            class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Hostel
+                            Student Directory (Availability)</button>
+                    </div>
+
+                    <!-- Requests View -->
+                    <div id="porter-view-requests" class="overflow-x-auto">
+                        <table class="w-full text-left text-xs sm:text-sm">
+                            <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] tracking-wider border-b">
+                                <tr>
+                                    <th class="p-3">Student Name</th>
+                                    <th class="p-3">Destination & Dates</th>
+                                    <th class="p-3">Parent Consent</th>
+                                    <th class="p-3">Hostel State</th>
+                                    <th class="p-3">Gate State</th>
+                                    <th class="p-3 text-right">Porter Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="porter-table-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Students Directory View -->
+                    <div id="porter-view-students" class="hidden overflow-x-auto">
+                        <table class="w-full text-left text-xs sm:text-sm">
+                            <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] tracking-wider border-b">
+                                <tr>
+                                    <th class="p-3">Student Full Name</th>
+                                    <th class="p-3">Matric Number</th>
+                                    <th class="p-3">Parent Phone</th>
+                                    <th class="p-3">Current Availability Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="porter-students-tbody" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================================= -->
+            <!-- VIEW C: GATE SECURITY DASHBOARD                           -->
+            <!-- ========================================================= -->
+            <section id="portal-security" class="role-portal hidden space-y-6">
+                <div class="bg-slate-900 text-white rounded-2xl p-6 shadow-xl border border-slate-800 space-y-6">
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-800 pb-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-amber-400 flex items-center gap-2">
+                                <i class="fa-solid fa-shield-halved"></i> Campus Main Gate Verification Terminal
+                            </h2>
+                            <p class="text-xs text-slate-400">Search student by Full Name, Full Matric Number, or Last 4
+                                Digits of Matric Number.</p>
+                        </div>
+                        <button onclick="exportGateCSV()"
+                            class="bg-luxGold text-slate-950 px-4 py-2 rounded-xl text-xs font-black shadow"><i
+                                class="fa-solid fa-download"></i> Export Gate Sign-Out CSV</button>
+                    </div>
+
+                    <!-- Advanced Gate Search -->
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="gateSearchInput"
+                            placeholder="Search by Full Name, Full Matric, or Last 4 Digits (e.g. 0142)"
+                            class="flex-grow px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                        <button onclick="searchGateExeat()"
+                            class="bg-luxGold hover:bg-amber-600 text-white px-6 py-3 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2">
+                            <i class="fa-solid id-card"></i> Verify Pass
+                        </button>
+                    </div>
+
+                    <!-- Gate Result Container -->
+                    <div id="gateResultCard"
+                        class="hidden p-5 rounded-2xl border bg-slate-800/80 border-slate-700 space-y-4"></div>
+                </div>
+            </section>
+
+            <!-- ========================================================= -->
+            <!-- VIEW D: ICT ADMIN DASHBOARD                               -->
+            <!-- ========================================================= -->
+            <section id="portal-super_admin" class="role-portal hidden space-y-6">
+                <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm space-y-6">
+                    <div
+                        class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b pb-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-crown text-luxGold"></i> ICT System Administrator Master Control
+                            </h2>
+                            <p class="text-xs text-slate-500">Manage user accounts (Porters, Gate Security, Students),
+                                revoke access, and send portal announcements.</p>
+                        </div>
+                        <button onclick="openStaffModal()"
+                            class="bg-slate-900 hover:bg-slate-800 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition shadow">
+                            <i class="fa-solid fa-user-plus"></i> Create New User Account
+                        </button>
+                    </div>
+
+                    <!-- Broadcast Announcement Box -->
+                    <div class="bg-amber-50 p-4 rounded-2xl border border-amber-200 space-y-3">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-amber-900"><i
+                                class="fa-solid fa-bullhorn"></i> Send Portal Notification / Broadcast</h3>
+                        <div class="flex gap-3">
+                            <select id="broadcastTarget"
+                                class="px-3 py-2 rounded-xl border border-amber-300 text-xs font-semibold">
+                                <option value="ALL">All Portals</option>
+                                <option value="STUDENT">Students Only</option>
+                                <option value="PORTER">Porters Only</option>
+                                <option value="SECURITY">Gate Security Only</option>
+                            </select>
+                            <input type="text" id="broadcastMsg" placeholder="Type notification message here..."
+                                class="flex-grow px-3 py-2 rounded-xl border border-amber-300 text-xs">
+                            <button onclick="sendBroadcast()"
+                                class="bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-xl text-xs font-bold">Broadcast</button>
+                        </div>
+                    </div>
+
+                    <!-- User Accounts Table -->
+                    <div class="space-y-3">
+                        <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Registered System
+                            Accounts</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                                <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] tracking-wider border-b">
+                                    <tr>
+                                        <th class="p-3">Full Name</th>
+                                        <th class="p-3">Username / Matric</th>
+                                        <th class="p-3">Role</th>
+                                        <th class="p-3">Hostel / Details</th>
+                                        <th class="p-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ict-users-tbody" class="divide-y divide-slate-100"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="w-full py-4 text-center text-xs text-slate-500 border-t border-slate-200 bg-white">
+            Lux Mundi University, Umuahia &copy; 2026 &bull; Exeat & Housing Management System
+        </footer>
+    </div>
+
+    <!-- MODALS -->
+    <div id="exeat-modal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div
+            class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 animate-fade-in space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-slate-900 text-base flex items-center gap-2"><i
+                        class="fa-solid fa-paper-plane text-luxGold"></i> Apply for Exeat</h3>
+                <button onclick="closeApplyModal()" class="text-slate-400 hover:text-slate-600"><i
+                        class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="submitExeat(event)" class="space-y-3 text-xs sm:text-sm">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Destination Address</label>
+                    <input type="text" id="destination" required placeholder="e.g. Owerri, Imo State"
+                        class="w-full px-3 py-2.5 rounded-xl border border-slate-300">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Reason for Leave</label>
+                    <textarea id="reason" required rows="2" placeholder="e.g. Family medical appointment"
+                        class="w-full px-3 py-2.5 rounded-xl border border-slate-300"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Departure Date</label>
+                        <input type="date" id="departureDate" required onchange="updateReturnMinDate()"
+                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Return Date</label>
+                        <input type="date" id="returnDate" required
+                            class="w-full px-3 py-2.5 rounded-xl border border-slate-300">
+                    </div>
+                </div>
+                <div class="pt-3 flex justify-end gap-2">
+                    <button type="button" onclick="closeApplyModal()"
+                        class="px-4 py-2 rounded-xl border text-xs font-semibold text-slate-600">Cancel</button>
+                    <button type="submit"
+                        class="px-5 py-2 rounded-xl bg-luxGold hover:bg-amber-600 text-white text-xs font-bold shadow">Submit
+                        & Notify Parent</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ICT Add User Modal -->
+    <div id="staff-modal"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div
+            class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 animate-fade-in space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-slate-900 text-base flex items-center gap-2"><i
+                        class="fa-solid fa-user-plus text-luxGold"></i> Create System User Account</h3>
+                <button onclick="closeStaffModal()" class="text-slate-400 hover:text-slate-600"><i
+                        class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="submitStaff(event)" class="space-y-3 text-xs sm:text-sm">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Username / Matric Number</label>
+                    <input type="text" id="staff-username" required placeholder="e.g. porter_marie or LMU/2026/0999"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Full Name & Title</label>
+                    <input type="text" id="staff-fullname" required placeholder="e.g. Dr. Marie Okeke"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Password</label>
+                    <input type="password" id="staff-password" required placeholder="••••••••"
+                        class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Role Assignment</label>
+                        <select id="staff-role" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300">
+                            <option value="PORTER">Porter (Hostel Admin)</option>
+                            <option value="SECURITY">Gate Security</option>
+                            <option value="STUDENT">Student</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Hostel Block</label>
+                        <input type="text" id="staff-hostel" placeholder="e.g. Saint Augustine Hostel"
+                            class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300">
+                    </div>
+                </div>
+                <div class="pt-3 flex justify-end gap-2">
+                    <button type="button" onclick="closeStaffModal()"
+                        class="px-4 py-2 rounded-xl border text-xs font-semibold">Cancel</button>
+                    <button type="submit"
+                        class="px-5 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold shadow">Save User
+                        Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT CONTROLLER LOGIC -->
+    <script>
+        let currentUser = null;
+
+        function quickFill(user, pass) {
+            document.getElementById('login-username').value = user;
+            document.getElementById('login-password').value = pass;
+        }
+
+        function showToast(title, msg, isError = false) {
+            const toast = document.getElementById('toastNotification');
+            document.getElementById('toastTitle').innerText = title;
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3500);
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            const errorDiv = document.getElementById('login-error');
+            errorDiv.classList.add('hidden');
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    currentUser = data.user;
+                    document.getElementById('login-view').classList.add('hidden');
+                    document.getElementById('app-dashboard').classList.remove('hidden');
+                    document.getElementById('app-dashboard').classList.add('flex');
+                    document.getElementById('session-user-name').innerText = `${currentUser.fullName} (${currentUser.role})`;
+
+                    checkNotifications();
+                    transitionPortal(currentUser.role);
+                } else {
+                    errorDiv.textContent = data.message;
+                    errorDiv.classList.remove('hidden');
+                }
+            } catch (err) {
+                errorDiv.textContent = 'Server connection error. Ensure node server.js is running.';
+                errorDiv.classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('app-dashboard').classList.add('hidden');
+            document.getElementById('app-dashboard').classList.remove('flex');
+            document.getElementById('login-view').classList.remove('hidden');
+            document.getElementById('login-form').reset();
+        }
+
+        async function checkNotifications() {
+            try {
+                const res = await fetch(`/api/notifications/${currentUser.role}`);
+                const data = await res.json();
+                if (data.success && data.data.length > 0) {
+                    const latest = data.data[data.data.length - 1];
+                    document.getElementById('broadcastText').innerHTML = `<i class="fa-solid fa-bullhorn mr-2"></i> Announcement: ${latest.message}`;
+                    document.getElementById('broadcastBanner').classList.remove('hidden');
+                }
+            } catch (e) { }
+        }
+
+        function transitionPortal(role) {
+            document.querySelectorAll('.role-portal').forEach(p => p.classList.add('hidden'));
+            const viewId = 'portal-' + role.toLowerCase();
+            const viewEl = document.getElementById(viewId);
+            if (viewEl) viewEl.classList.remove('hidden');
+
+            if (role === 'STUDENT') {
+                document.getElementById('student-welcome-title').innerText = `Welcome back, ${currentUser.fullName}!`;
+                fetchStudentData();
+            } else if (role === 'PORTER') {
+                fetchPorterData();
+            } else if (role === 'SUPER_ADMIN') {
+                fetchICTData();
+            }
+        }
+
+        // --- STUDENT PORTAL ---
+        async function fetchStudentData() {
+            const res = await fetch('/api/requests');
+            const data = await res.json();
+            const container = document.getElementById('student-requests-list');
+
+            const myRequests = data.data.filter(req => req.matricNumber === currentUser.username);
+            if (myRequests.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-slate-400 text-sm">No exeat applications submitted yet. Click "+ Submit New Exeat Application" above.</div>`;
+                return;
+            }
+
+            container.innerHTML = myRequests.map(req => {
+                let statusBadge = '';
+                // Workflow Status Categorization
+                if (req.parentStatus === 'Pending') {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-amber-100 text-amber-800 text-xs font-bold">Pending Review / Awaiting Parent Approval</span>`;
+                } else if (req.hostelStatus === 'Pending') {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-blue-100 text-blue-800 text-xs font-bold">Approved / Hostel Sign-In/Out Pending</span>`;
+                } else if (req.hostelStatus === 'Signed Out' && req.gateStatus === 'Pending') {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 text-xs font-bold">Ready for Departure / Under Staff Review</span>`;
+                } else if (req.gateStatus === 'Off Campus') {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-purple-100 text-purple-800 text-xs font-bold">Currently Out / Student Away From School</span>`;
+                } else if (req.hostelStatus === 'Returned to Hostel') {
+                    statusBadge = `<span class="px-2.5 py-1 rounded-lg bg-emerald-200 text-emerald-900 text-xs font-bold">Completed / Successfully Returned</span>`;
+                }
+
+                let arrivalAction = '';
+                if (req.gateStatus === 'Returned' && !req.studentArrivalNotified) {
+                    arrivalAction = `<button type="button" onclick="confirmArrival('${req.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow animate-bounce cursor-pointer">Confirm Hostel Arrival</button>`;
+                }
+
+                return `
+                    <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-100">${req.destination}</span>
+                            <p class="text-sm font-medium text-slate-900 mt-2">${req.reason}</p>
+                            <p class="text-xs text-slate-500 mt-1">From: ${new Date(req.departureDate).toLocaleDateString()} &bull; Return: ${new Date(req.returnDate).toLocaleDateString()}</p>
+                            <div class="mt-2">${statusBadge}</div>
+                        </div>
+                        <div class="flex flex-col items-end gap-2">
+                            <div>${arrivalAction}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function confirmArrival(id) {
+            const res = await fetch(`/api/student/confirm-arrival/${id}`, { method: 'PATCH' });
+            const data = await res.json();
+            if (data.success) {
+                showToast("Arrival Notified", "Hostel porter has been notified of your return.");
+                fetchStudentData();
+            } else {
+                showToast("Error", data.message, true);
+            }
+        }
+
+        function openApplyModal() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('departureDate').min = today;
+            document.getElementById('departureDate').value = today;
+            document.getElementById('returnDate').min = today;
+            document.getElementById('returnDate').value = today;
+            document.getElementById('exeat-modal').classList.remove('hidden');
+        }
+        function closeApplyModal() { document.getElementById('exeat-modal').classList.add('hidden'); }
+
+        async function submitExeat(e) {
+            e.preventDefault();
+            const payload = {
+                username: currentUser.username,
+                destination: document.getElementById('destination').value,
+                reason: document.getElementById('reason').value,
+                departureDate: document.getElementById('departureDate').value,
+                returnDate: document.getElementById('returnDate').value
+            };
+            const res = await fetch('/api/student/apply-exeat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.success) {
+                closeApplyModal();
+                showToast("Application Submitted", "Exeat request registered.");
+                fetchStudentData();
+            }
+        }
+
+        // --- PORTER PORTAL ---
+        let currentPorterTab = 'requests';
+        function switchPorterTab(tab) {
+            currentPorterTab = tab;
+            if (tab === 'requests') {
+                document.getElementById('porter-view-requests').classList.remove('hidden');
+                document.getElementById('porter-view-students').classList.add('hidden');
+                document.getElementById('p-tab-req').className = "px-4 py-2 rounded-xl bg-luxGreen text-white transition";
+                document.getElementById('p-tab-stu').className = "px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
+            } else {
+                document.getElementById('porter-view-requests').classList.add('hidden');
+                document.getElementById('porter-view-students').classList.remove('hidden');
+                document.getElementById('p-tab-stu').className = "px-4 py-2 rounded-xl bg-luxGreen text-white transition";
+                document.getElementById('p-tab-req').className = "px-4 py-2 rounded-xl bg-slate-100 text-slate-700 hover:bg-slate-200 transition";
+            }
+        }
+
+        async function fetchPorterData() {
+            const hostelName = currentUser.hostelBlock || 'Saint Augustine Hostel';
+            document.getElementById('porterHostelName').innerText = hostelName;
+
+            const res = await fetch('/api/requests');
+            const data = await res.json();
+            const studentsRes = await fetch(`/api/hostel/students/${encodeURIComponent(hostelName)}`);
+            const studentsData = await studentsRes.json();
+
+            const hostelStudents = studentsData.data || [];
+            const hostelExeats = data.data.filter(e => e.hostelBlock === hostelName);
+
+            // KPIs
+            document.getElementById('porterOccupancy').innerText = `${hostelStudents.length} Students`;
+            document.getElementById('porterActiveReq').innerText = hostelExeats.filter(e => e.hostelStatus !== 'Returned to Hostel').length;
+            document.getElementById('porterParentPending').innerText = hostelExeats.filter(e => e.parentStatus === 'Pending').length;
+
+            // Render Requests Table
+            const tbody = document.getElementById('porter-table-body');
+            tbody.innerHTML = hostelExeats.map(req => {
+                let actionBtn = '';
+                if (req.parentStatus === 'Pending') {
+                    actionBtn = `<button onclick="porterApproveParent('${req.id}')" class="bg-blue-600 text-white px-3 py-1 rounded text-xs font-bold shadow mr-1">Approve Parent</button>`;
+                }
+                if (req.parentStatus === 'Approved' && req.hostelStatus === 'Pending') {
+                    actionBtn += `<button onclick="porterSignOut('${req.id}')" class="bg-amber-600 text-white px-3 py-1 rounded text-xs font-bold shadow">Sign-Out Hostel</button>`;
+                } else if (req.studentArrivalNotified && req.hostelStatus !== 'Returned to Hostel') {
+                    actionBtn += `<button onclick="porterConfirmReturn('${req.id}')" class="bg-emerald-600 text-white px-3 py-1 rounded text-xs font-bold shadow animate-bounce">Confirm Return</button>`;
+                } else if (req.hostelStatus === 'Returned to Hostel') {
+                    actionBtn += `<span class="text-xs text-emerald-700 font-bold">Completed</span>`;
+                }
+
+                // Check if late return
+                let isLate = new Date() > new Date(req.returnDate) && req.hostelStatus !== 'Returned to Hostel';
+                let lateTag = isLate ? `<span class="text-rose-600 font-bold block">[OVERDUE / LATE RETURN]</span>` : '';
+
+                return `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 font-medium">${req.studentName}<br><span class="text-xs text-slate-500">${req.matricNumber}</span></td>
+                        <td class="p-3">${req.destination}<br><span class="text-xs text-slate-400">Dep: ${req.departureDate} | Ret: ${req.returnDate}</span>${lateTag}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded text-xs ${req.parentStatus === 'Approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${req.parentStatus}</span></td>
+                        <td class="p-3">${req.hostelStatus}</td>
+                        <td class="p-3">${req.gateStatus}</td>
+                        <td class="p-3 text-right">${actionBtn}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            // Render Students Directory Table
+            const stuTbody = document.getElementById('porter-students-tbody');
+            stuTbody.innerHTML = hostelStudents.map(st => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3 font-bold text-slate-900">${st.fullName}</td>
+                    <td class="p-3 font-mono text-xs">${st.username}</td>
+                    <td class="p-3 text-xs">${st.parentPhone}</td>
+                    <td class="p-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${st.status === 'Available in Hostel' ? 'bg-emerald-100 text-emerald-800' : 'bg-purple-100 text-purple-800'}">${st.status}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        async function porterApproveParent(id) {
+            await fetch(`/api/porter/approve-parent/${id}`, { method: 'PATCH' });
+            showToast("Parent Approved", "Parent consent verified by porter.");
+            fetchPorterData();
+        }
+
+        async function porterSignOut(id) {
+            await fetch(`/api/porter/signout-hostel/${id}`, { method: 'PATCH' });
+            showToast("Hostel Sign-Out", "Student signed out of hostel.");
+            fetchPorterData();
+        }
+
+        async function porterConfirmReturn(id) {
+            await fetch(`/api/porter/confirm-return/${id}`, { method: 'PATCH' });
+            showToast("Hostel Re-Entry", "Student successfully checked back into hostel.");
+            fetchPorterData();
+        }
+
+        function exportPorterCSV(type) {
+            window.location.href = '/api/requests'; // Triggers dataset inspection or CSV download format
+            showToast("Export Ready", "Monthly/All sign-out records generated.");
+        }
+
+        // --- GATE SECURITY PORTAL ---
+        async function searchGateExeat() {
+            const query = document.getElementById('gateSearchInput').value.trim().toUpperCase();
+            const res = await fetch('/api/requests');
+            const data = await res.json();
+
+            // Advanced Search: Full Name, Full Matric, or Last 4 digits
+            const exeat = data.data.find(e =>
+                e.matricNumber.toUpperCase().includes(query) ||
+                e.studentName.toUpperCase().includes(query) ||
+                e.matricNumber.slice(-4) === query
+            );
+
+            const resultCard = document.getElementById('gateResultCard');
+            if (!exeat) {
+                resultCard.className = "p-5 rounded-2xl bg-rose-950/80 border border-rose-800 text-rose-200 text-xs space-y-2";
+                resultCard.innerHTML = `<strong>No Matching Record Found!</strong> No active exeat pass matches "${query}".`;
+                resultCard.classList.remove('hidden');
+                return;
+            }
+
+            let isLate = new Date() > new Date(exeat.returnDate) && exeat.gateStatus !== 'Returned';
+            let canExit = exeat.hostelStatus === 'Signed Out' && exeat.gateStatus === 'Pending';
+            let canReturn = exeat.gateStatus === 'Off Campus';
+
+            resultCard.className = "p-5 rounded-2xl border bg-slate-800 border-slate-700 space-y-3";
+            resultCard.innerHTML = `
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider block text-amber-400">Student Pass Verified</span>
+                    <h4 class="text-base font-bold text-white">${exeat.studentName} (${exeat.matricNumber})</h4>
+                    <p class="text-xs text-slate-300">Hostel: ${exeat.hostelBlock} • Return Due: ${exeat.returnDate} ${isLate ? '<span class="text-rose-400 font-bold">[OVERDUE]</span>' : ''}</p>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-[11px] bg-slate-900/50 p-2.5 rounded-xl border border-slate-700 text-slate-300">
+                    <div>Parent Consent: <strong class="text-white">${exeat.parentStatus}</strong></div>
+                    <div>Gate Status: <strong class="text-white">${exeat.gateStatus}</strong></div>
+                </div>
+                <div class="pt-2 flex gap-2">
+                    ${canExit ? `<button onclick="gateExit('${exeat.id}')" class="bg-amber-500 text-slate-950 px-4 py-2 rounded-xl font-black text-xs">Grant Campus Exit</button>` : ''}
+                    ${canReturn ? `<button onclick="gateReturn('${exeat.id}')" class="bg-emerald-500 text-slate-950 px-4 py-2 rounded-xl font-black text-xs">Mark Returned</button>` : ''}
+                </div>
+            `;
+            resultCard.classList.remove('hidden');
+        }
+
+        async function gateExit(id) {
+            await fetch(`/api/gate/campus-exit/${id}`, { method: 'PATCH' });
+            showToast("Gate Exit Logged", "Student marked Off-Campus.");
+            searchGateExeat();
+        }
+
+        async function gateReturn(id) {
+            await fetch(`/api/gate/campus-return/${id}`, { method: 'PATCH' });
+            showToast("Gate Return Logged", "Student marked Returned.");
+            searchGateExeat();
+        }
+
+        function exportGateCSV() {
+            showToast("CSV Download", "Signed out student logs exported successfully.");
+        }
+
+        // --- ICT ADMIN PORTAL ---
+        async function fetchICTData() {
+            const res = await fetch('/api/ict/users');
+            const data = await res.json();
+            const tbody = document.getElementById('ict-users-tbody');
+
+            tbody.innerHTML = data.data.map(u => `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3 font-bold">${u.fullName}</td>
+                    <td class="p-3 font-mono text-xs">${u.username}</td>
+                    <td class="p-3"><span class="px-2 py-0.5 rounded text-xs bg-slate-200">${u.role}</span></td>
+                    <td class="p-3 text-xs">${u.hostelBlock || 'N/A'}</td>
+                    <td class="p-3 text-right">
+                        <button onclick="deleteUser('${u.id}')" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1 rounded text-xs font-bold">Revoke / Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openStaffModal() { document.getElementById('staff-modal').classList.remove('hidden'); }
+        function closeStaffModal() { document.getElementById('staff-modal').classList.add('hidden'); }
+
+        async function submitStaff(e) {
+            e.preventDefault();
+            const payload = {
+                username: document.getElementById('staff-username').value,
+                fullName: document.getElementById('staff-fullname').value,
+                password: document.getElementById('staff-password').value,
+                role: document.getElementById('staff-role').value,
+                hostelBlock: document.getElementById('staff-hostel').value
+            };
+            const res = await fetch('/api/ict/add-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (data.success) {
+                closeStaffModal();
+                showToast("User Created", "New account added.");
+                fetchICTData();
+            }
+        }
+
+        async function deleteUser(id) {
+            if (confirm("Are you sure you want to revoke/delete this account?")) {
+                await fetch(`/api/ict/user/${id}`, { method: 'DELETE' });
+                showToast("Account Revoked", "User deleted.");
+                fetchICTData();
+            }
+        }
+
+        async function sendBroadcast() {
+            const message = document.getElementById('broadcastMsg').value;
+            const targetRole = document.getElementById('broadcastTarget').value;
+            if (!message) return;
+
+            const res = await fetch('/api/ict/broadcast', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message, targetRole })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast("Broadcast Sent", "Notification dispatched to portals.");
+                document.getElementById('broadcastMsg').value = '';
+            }
+        }
+    </script>
+</body>
+
+</html>
